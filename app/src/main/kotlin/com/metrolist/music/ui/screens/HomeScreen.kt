@@ -679,8 +679,6 @@ fun HomeScreen(
     LaunchedEffect(Unit) { viewModel.loadHomeData() }
 
     val shouldShowWrappedCard by viewModel.showWrappedCard.collectAsStateWithLifecycle()
-    val wrappedState by viewModel.wrappedManager.state.collectAsStateWithLifecycle()
-    val isWrappedDataReady = wrappedState.isDataReady
 
     val isLoggedIn =
         remember(innerTubeCookie) {
@@ -1357,58 +1355,30 @@ fun HomeScreen(
                     item(key = "wrapped_card") {
                         AnimatedVisibility(visible = shouldShowWrappedCard) {
                             Card(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                colors =
-                                    CardDefaults.cardColors(
-                                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                    ),
+                                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                             ) {
-                                Box(
-                                    modifier =
-                                        Modifier
-                                            .fillMaxWidth(),
-                                    contentAlignment = Alignment.Center,
+                                Column(
+                                    modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
-                                    if (isWrappedDataReady) {
-                                        val bbhFont =
-                                            try {
-                                                FontFamily(Font(R.font.bbh_bartle_regular))
-                                            } catch (e: Exception) {
-                                                FontFamily.Default
-                                            }
-                                        Column(
-                                            modifier = Modifier.padding(16.dp),
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
-                                        ) {
-                                            Text(
-                                                text = stringResource(R.string.wrapped_ready_title),
-                                                style =
-                                                    MaterialTheme.typography.headlineLarge.copy(
-                                                        fontFamily = bbhFont,
-                                                        textAlign = TextAlign.Center,
-                                                    ),
-                                            )
-                                            Spacer(modifier = Modifier.height(8.dp))
-                                            Text(
-                                                text = stringResource(R.string.wrapped_ready_subtitle),
-                                                style =
-                                                    MaterialTheme.typography.bodyLarge.copy(
-                                                        textAlign = TextAlign.Center,
-                                                    ),
-                                            )
-                                            Spacer(modifier = Modifier.height(16.dp))
-                                            Button(onClick = {
-                                                navController.navigate("wrapped")
-                                            }) {
-                                                Text(stringResource(R.string.open))
-                                            }
-                                        }
-                                    } else {
-                                        ContainedLoadingIndicator()
+                                    Text(
+                                        text = stringResource(R.string.wrapped_ready_title),
+                                        style = MaterialTheme.typography.headlineMedium,
+                                        textAlign = TextAlign.Center,
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = stringResource(R.string.wrapped_ready_subtitle),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        textAlign = TextAlign.Center,
+                                    )
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Button(onClick = {
+                                        viewModel.markWrappedAsSeen()
+                                        navController.navigate("wrapped")
+                                    }) {
+                                        Text(stringResource(R.string.open))
                                     }
                                 }
                             }
