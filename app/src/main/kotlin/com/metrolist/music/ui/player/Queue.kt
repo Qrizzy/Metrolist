@@ -265,7 +265,7 @@ fun Queue(
         },
         collapsedContent = {
             when (playerDesignStyle) {
-                PlayerDesignStyle.EXPRESSIVE, PlayerDesignStyle.MINIMAL -> {
+                PlayerDesignStyle.EXPRESSIVE -> {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -414,6 +414,145 @@ fun Queue(
                             modifier = Modifier.size(iconSize),
                             tint = iconButtonColor,
                         )
+                    }
+                }
+                }
+                PlayerDesignStyle.MINIMAL -> {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 30.dp, vertical = 12.dp)
+                        .windowInsetsPadding(
+                            WindowInsets.systemBars.only(
+                                WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal,
+                            ),
+                        ),
+                ) {
+                    TextButton(
+                        onClick = { state.expandSoft() },
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.queue_music),
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                                tint = TextBackgroundColor,
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = stringResource(id = R.string.queue),
+                                color = TextBackgroundColor,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.basicMarquee(),
+                            )
+                        }
+                    }
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        IconButton(
+                            onClick = {
+                                // Cast connection handled externally; visual indicator only
+                            },
+                        ) {
+                            Icon(
+                                painter = painterResource(
+                                    if (isCasting) R.drawable.cast_connected else R.drawable.cast,
+                                ),
+                                contentDescription = null,
+                                tint = if (isCasting) TextBackgroundColor else TextBackgroundColor.copy(alpha = 0.7f),
+                                modifier = Modifier.size(24.dp),
+                            )
+                        }
+
+                        TextButton(
+                            enabled = !isListenTogetherGuest,
+                            onClick = {
+                                if (!isListenTogetherGuest) {
+                                    if (sleepTimerEnabled) {
+                                        playerConnection.service.sleepTimer?.clear()
+                                    } else {
+                                        showSleepTimerDialog = true
+                                    }
+                                }
+                            },
+                            modifier = Modifier.weight(1.2f),
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.bedtime),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp),
+                                    tint = if (sleepTimerEnabled) TextBackgroundColor else TextBackgroundColor.copy(alpha = 0.7f),
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                AnimatedContent(
+                                    label = "sleepTimer",
+                                    targetState = sleepTimerEnabled,
+                                ) { enabled ->
+                                    if (enabled) {
+                                        Text(
+                                            text = makeTimeString(sleepTimerTimeLeft),
+                                            color = TextBackgroundColor,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.basicMarquee(),
+                                        )
+                                    } else {
+                                        Text(
+                                            text = stringResource(id = R.string.sleep_timer),
+                                            color = TextBackgroundColor.copy(alpha = 0.7f),
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.basicMarquee(),
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    TextButton(
+                        onClick = { onToggleLyrics() },
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.lyrics),
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                                tint = TextBackgroundColor,
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = stringResource(R.string.lyrics),
+                                color = TextBackgroundColor,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.basicMarquee(),
+                            )
+                        }
                     }
                 }
                 }
