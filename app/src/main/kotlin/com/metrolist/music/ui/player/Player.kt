@@ -34,6 +34,7 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -90,6 +91,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -1860,7 +1862,6 @@ fun BottomSheetPlayer(
                                         Modifier
                                             .size(100.dp)
                                             .clip(RoundedCornerShape(playPauseRoundness))
-                                            .background(textButtonColor)
                                             .clickable {
                                                 if (isListenTogetherGuest) {
                                                     playerConnection.toggleMute()
@@ -1922,12 +1923,37 @@ fun BottomSheetPlayer(
                                     .fillMaxWidth()
                                     .padding(horizontal = PlayerHorizontalPadding),
                             ) {
+                                val volumeInteractionSource = remember { MutableInteractionSource() }
+                                val isVolumeDragged by volumeInteractionSource.collectIsDraggedAsState()
+                                val isVolumePressed by volumeInteractionSource.collectIsPressedAsState()
+                                val isVolumeActive = isVolumeDragged || isVolumePressed
+
+                                val volumeTrackHeight by animateDpAsState(
+                                    targetValue = if (isVolumeActive) 16.dp else 10.dp,
+                                    animationSpec = spring(
+                                        dampingRatio = 0.7f,
+                                        stiffness = 600f,
+                                    ),
+                                    label = "volumeTrackHeight"
+                                )
+
+                                val volumeIconScale by animateFloatAsState(
+                                    targetValue = if (isVolumeActive) 1.15f else 1f,
+                                    animationSpec = spring(
+                                        dampingRatio = 0.7f,
+                                        stiffness = 600f,
+                                    ),
+                                    label = "volumeIconScale"
+                                )
+
                                 val volume = if (isCasting) castVolume else 1f
                                 Icon(
                                     painter = painterResource(R.drawable.volume_mute),
                                     contentDescription = null,
                                     tint = textButtonColor,
-                                    modifier = Modifier.size(20.dp),
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .graphicsLayer(scaleX = volumeIconScale, scaleY = volumeIconScale),
                                 )
                                 Spacer(Modifier.width(12.dp))
                                 Slider(
@@ -1938,18 +1964,27 @@ fun BottomSheetPlayer(
                                         }
                                     },
                                     modifier = Modifier.weight(1f),
-                                    colors = SliderDefaults.colors(
-                                        thumbColor = textButtonColor,
-                                        activeTrackColor = textButtonColor.copy(alpha = 0.7f),
-                                        inactiveTrackColor = textButtonColor.copy(alpha = 0.15f),
-                                    ),
+                                    interactionSource = volumeInteractionSource,
+                                    thumb = {},
+                                    track = { sliderState ->
+                                        PlayerSliderTrack(
+                                            sliderState = sliderState,
+                                            colors = SliderDefaults.colors(
+                                                activeTrackColor = textButtonColor.copy(alpha = 0.7f),
+                                                inactiveTrackColor = textButtonColor.copy(alpha = 0.15f),
+                                            ),
+                                            trackHeight = volumeTrackHeight,
+                                        )
+                                    },
                                 )
                                 Spacer(Modifier.width(12.dp))
                                 Icon(
                                     painter = painterResource(R.drawable.volume_up),
                                     contentDescription = null,
                                     tint = textButtonColor,
-                                    modifier = Modifier.size(20.dp),
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .graphicsLayer(scaleX = volumeIconScale, scaleY = volumeIconScale),
                                 )
                             }
                         }
