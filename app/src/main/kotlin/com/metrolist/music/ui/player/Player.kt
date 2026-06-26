@@ -1299,7 +1299,6 @@ fun BottomSheetPlayer(
                                                 menuState.show {
                                                     com.metrolist.music.ui.menu.PlayerMenu(
                                                         mediaMetadata = mediaMetadata,
-                                                        navController = navController,
                                                         playerBottomSheetState = state,
                                                         onShowDetailsDialog = {
                                                             mediaMetadata.id.let {
