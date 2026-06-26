@@ -2197,6 +2197,7 @@ fun BottomSheetPlayer(
                                     isPlayerExpanded = isExpandedProvider,
                                     isLandscape = true,
                                     isListenTogetherGuest = isListenTogetherGuest,
+                                    playerDesignStyle = playerDesignStyle,
                                 )
                             }
                         }
@@ -2259,6 +2260,7 @@ fun BottomSheetPlayer(
                                     modifier = Modifier.nestedScroll(state.preUpPostDownNestedScrollConnection),
                                     isPlayerExpanded = isExpandedProvider,
                                     isListenTogetherGuest = isListenTogetherGuest,
+                                    playerDesignStyle = playerDesignStyle,
                                 )
                             }
                         }

@@ -93,8 +93,6 @@ import com.metrolist.music.constants.PureBlackMiniPlayerKey
 import com.metrolist.music.constants.SwipeSensitivityKey
 import com.metrolist.music.constants.SwipeThumbnailKey
 import com.metrolist.music.constants.ThumbnailCornerRadius
-import com.metrolist.music.constants.PlayerDesignStyle
-import com.metrolist.music.constants.PlayerDesignStyleKey
 import com.metrolist.music.constants.UseNewMiniPlayerDesignKey
 import com.metrolist.music.db.entities.ArtistEntity
 import com.metrolist.music.listentogether.ListenTogetherManager
@@ -215,12 +213,6 @@ private fun NewMiniPlayer(
             }
         }
     val isCasting by castHandler?.isCasting?.collectAsStateWithLifecycle() ?: remember { mutableStateOf(false) }
-
-    val (playerDesignStyle) =
-        rememberEnumPreference(
-            PlayerDesignStyleKey,
-            defaultValue = PlayerDesignStyle.EXPRESSIVE,
-        )
 
     // Swipe settings
     val swipeSensitivity by rememberPreference(SwipeSensitivityKey, 0.73f)
@@ -464,19 +456,6 @@ private fun NewMiniPlayer(
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))
-
-                // Cast indicator - hidden in MINIMAL design
-                if (playerDesignStyle != PlayerDesignStyle.MINIMAL) {
-                    Icon(
-                        painter = painterResource(
-                            if (isCasting) R.drawable.cast_connected else R.drawable.cast
-                        ),
-                        contentDescription = "Casting",
-                        tint = primaryColor,
-                        modifier = Modifier.size(20.dp),
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                }
 
 // Subscribe button - isolated composable
                 mediaMetadata?.artists?.firstOrNull()?.id?.let { artistId ->
