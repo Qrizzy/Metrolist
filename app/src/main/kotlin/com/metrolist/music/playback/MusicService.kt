@@ -696,8 +696,10 @@ class MusicService :
                     PendingIntent.getActivity(
                         this,
                         0,
-                        Intent(this, MainActivity::class.java),
-                        PendingIntent.FLAG_IMMUTABLE,
+                        Intent(this, MainActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        },
+                        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
                     ),
                 ).setBitmapLoader(CoilBitmapLoader(this, scope))
                 .build()
@@ -4135,11 +4137,16 @@ class MusicService :
         // On Android O+, every startForegroundService() call requires
         // Service.startForeground() to be called within a short timeout.
         // Some OEMs (e.g. MIUI) strictly enforce this even when the
-        // service is already in the foreground, so always promote here.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (!ensureForegroundWithLatestNotificationOrStop()) {
-                return START_NOT_STICKY
-            }
+        // service is already in the foreground, so promote here.
+        // Only promote when the intent is null (system restart after
+        // notification was dismissed) or when the alarm triggers, so
+        // that normal playback actions don't interfere with the session
+        // notification's tap handler.
+        val requiresForegroundPromotion =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                (intent?.action == null || intent.action == ACTION_ALARM_TRIGGER)
+        if (requiresForegroundPromotion && !ensureForegroundWithLatestNotificationOrStop()) {
+            return START_NOT_STICKY
         }
 
         when (intent?.action) {
