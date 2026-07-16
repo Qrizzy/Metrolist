@@ -1,22 +1,22 @@
 plugins {
-    id("com.android.library")
     alias(libs.plugins.kotlin.multiplatform)
+    id("com.android.kotlin.multiplatform.library")
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.compose.multiplatform)
 }
 
 kotlin {
-    androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "17"
-            }
+    androidLibrary {
+        namespace = "com.metrolist.music.shared"
+        compileSdk = 37
+        minSdk = 26
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
     }
     
     jvm("desktop") {
-        compilations.all {
-            kotlinOptions.jvmTarget = "17"
-        }
+        compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
     
     sourceSets {
@@ -31,13 +31,5 @@ kotlin {
         }
         val androidMain by getting
         val desktopMain by getting
-    }
-}
-
-android {
-    namespace = "com.metrolist.music.shared"
-    compileSdk = 37
-    defaultConfig {
-        minSdk = 26
     }
 }
