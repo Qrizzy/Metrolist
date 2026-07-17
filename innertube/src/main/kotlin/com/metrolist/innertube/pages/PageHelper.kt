@@ -7,7 +7,7 @@ import com.metrolist.innertube.models.Run
 import com.metrolist.innertube.models.splitArtistsByConjunction
 import com.metrolist.innertube.models.splitBySeparator
 import com.metrolist.innertube.utils.parseTime
-import timber.log.Timber
+
 
 object PageHelper {
     // Icon types for library management (YouTube changed these in Feb 2026)

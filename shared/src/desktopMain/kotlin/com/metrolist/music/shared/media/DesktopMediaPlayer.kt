@@ -32,4 +32,14 @@ class DesktopMediaPlayer : MediaPlayer {
         println("DesktopMediaPlayer: Seeking to $positionMs")
         currentPositionMs = positionMs
     }
+
+    override fun setVolume(volume: Float) {
+        println("DesktopMediaPlayer: Setting volume to $volume")
+        this.volume = volume
+    }
+
+    override val lengthMs: Long = 0L
+    
+    override var volume: Float = 1.0f
+        private set
 }

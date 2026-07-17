@@ -14,6 +14,10 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(project(":shared"))
+                implementation(project(":innertube"))
+                implementation("uk.co.caprica:vlcj:4.8.3")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.11.0")
+                implementation("org.slf4j:slf4j-simple:2.0.12")
             }
         }
     }
